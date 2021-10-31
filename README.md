@@ -5,13 +5,12 @@ Hyperparameter optimization framework, inspired by [Optuna](https://github.com/o
 ## Getting started
 
 ```rust
-use rustuna::Study;
-use rustuna::Trial;
+use rustuna::{Study, Trial};
 
 fn objective(trial: &Trial) -> f64 {
     let x = trial.suggest_uniform("x", 0.0, 10.0);
     let y = trial.suggest_uniform("y", 0.0, 10.0);
-    return (x - 3.0).powi(2) + (y - 5.0).powi(2);
+    (x - 3.0).powi(2) + (y - 5.0).powi(2)
 }
 
 fn main() {

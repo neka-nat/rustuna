@@ -58,4 +58,12 @@ impl<'a> Trial<'a> {
             },
         )
     }
+    pub fn suggest_categorical<T: Copy + PartialEq>(&self, name: &str, choices: &Vec<T>) -> T {
+        self.suggest(
+            name,
+            CategoricalDistribution {
+                choices: choices.clone(),
+            },
+        )
+    }
 }

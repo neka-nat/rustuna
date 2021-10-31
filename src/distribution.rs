@@ -70,6 +70,27 @@ impl Distribution for IntUniformDistribution {
     }
 }
 
-// pub struct CategoricalDistribution<T> {
-//     pub choices: Vec<T>,
-// }
+pub struct CategoricalDistribution<T> {
+    pub choices: Vec<T>,
+}
+
+impl<T> Distribution for CategoricalDistribution<T>
+where
+    T: Copy + PartialEq,
+{
+    type ExternalRepr = T;
+    type Output = T;
+    fn to_internal_repr(&self, external_repr: Self::ExternalRepr) -> f64 {
+        self.choices
+            .iter()
+            .position(|&r| r == external_repr)
+            .unwrap() as f64
+    }
+    fn to_external_repr(&self, internal_repr: f64) -> Self::ExternalRepr {
+        self.choices[internal_repr as usize]
+    }
+    fn sample(&self, rng: &Rc<RefCell<ThreadRng>>) -> Self::Output {
+        let index = rng.borrow_mut().gen_range(0..self.choices.len());
+        self.choices[index]
+    }
+}

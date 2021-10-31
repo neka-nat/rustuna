@@ -1,7 +1,5 @@
 use rand::rngs::ThreadRng;
-use rand::Rng;
 use std::cell::RefCell;
-use std::collections::HashMap;
 use std::rc::Rc;
 
 use super::distribution::*;
