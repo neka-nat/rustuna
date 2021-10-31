@@ -4,6 +4,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
+use super::distribution::*;
 use super::frozen_trial::FrozenTrial;
 use super::study::Study;
 
@@ -20,15 +21,13 @@ impl Default for Sampler {
 }
 
 impl Sampler {
-    pub fn sample(
+    pub fn sample<T: Distribution>(
         &self,
         study: &Study,
         trial: &FrozenTrial,
         name: &str,
-        distribution: &HashMap<String, f64>,
-    ) -> f64 {
-        let low = distribution.get("low").unwrap_or(&0.0);
-        let high = distribution.get("high").unwrap_or(&1.0);
-        self.rng.borrow_mut().gen_range(*low..*high)
+        distribution: &T,
+    ) -> T::Output {
+        distribution.sample(&self.rng)
     }
 }

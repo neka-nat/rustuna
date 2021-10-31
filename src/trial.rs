@@ -1,6 +1,5 @@
+use super::distribution::*;
 use super::study::Study;
-
-use std::collections::HashMap;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum TrialState {
@@ -26,15 +25,37 @@ impl<'a> Trial<'a> {
     pub fn is_finished(&self) -> bool {
         self.state != TrialState::Running
     }
-    pub fn suggest_uniform(&self, name: &str, low: f64, high: f64) -> f64 {
+    fn suggest<T: Distribution>(&self, name: &str, distribution: T) -> T::Output {
         let trial = self.study.storage.get_trial(self.id);
-        let distribution: HashMap<String, f64> =
-            [(String::from("low"), low), (String::from("high"), high)]
-                .iter()
-                .cloned()
-                .collect();
         self.study
             .sampler
             .sample(self.study, &trial, name, &distribution)
+    }
+    pub fn suggest_uniform(&self, name: &str, low: f64, high: f64) -> f64 {
+        self.suggest(
+            name,
+            UniformDistribution {
+                low: low,
+                high: high,
+            },
+        )
+    }
+    pub fn suggest_loguniform(&self, name: &str, low: f64, high: f64) -> f64 {
+        self.suggest(
+            name,
+            LogUniformDistribution {
+                low: low,
+                high: high,
+            },
+        )
+    }
+    pub fn suggest_int(&self, name: &str, low: i32, high: i32) -> i32 {
+        self.suggest(
+            name,
+            IntUniformDistribution {
+                low: low,
+                high: high,
+            },
+        )
     }
 }
